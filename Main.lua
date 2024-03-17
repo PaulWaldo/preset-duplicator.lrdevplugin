@@ -1,3 +1,7 @@
+local Require = require "Require".path("../../../third-party/debuggingtoolkit.lrdevplugin").reload()
+local Debug = require "Debug".init()
+require "strict.lua"
+
 local LrDialogs = import 'LrDialogs'
 local LrApplication = import 'LrApplication'
 local LrDevelopController = import 'LrDevelopController'
@@ -88,7 +92,7 @@ local function applyPresetsToSelectedPhoto()
 end
 
 -- Entry point of the plugin
-LrTasks.startAsyncTask(function()
+LrTasks.startAsyncTask(Debug.showErrors(function()
     LrDialogs.message("getDevelopPresets", getDevelopPresets(), "info")
     -- applyPresetsToSelectedPhoto()
-end)
+end))
