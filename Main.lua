@@ -6,14 +6,15 @@ local LrTasks = import 'LrTasks'
 
 -- Function to get a list of available develop presets
 local function getDevelopPresets()
-    LrDialogs.message("LrDevelopPresetFolders()",
-        LrApplication.LrDevelopPresetFolders(), "info")
-
-    local presets = {}
-    for _, preset in ipairs(LrApplication.developPresetManager():getPresets()) do
-        table.insert(presets, preset:getName())
+    local folders = {}
+    for _, folder in ipairs(LrApplication.developPresetFolders()) do
+        local presets = {}
+        local folderName = folder.getName()
+        for _, preset in ipairs(folder.getDevelopPresets()) do
+            folders[folderName] = folder.getDevelopPresets()
+        end
     end
-    return presets
+    return folders
 end
 
 -- Function to prompt user to select presets
@@ -88,5 +89,6 @@ end
 
 -- Entry point of the plugin
 LrTasks.startAsyncTask(function()
-    applyPresetsToSelectedPhoto()
+    LrDialogs.message("getDevelopPresets", getDevelopPresets(), "info")
+    -- applyPresetsToSelectedPhoto()
 end)
