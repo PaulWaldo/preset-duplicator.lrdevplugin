@@ -1,4 +1,5 @@
 {
   "Lua.diagnostics.disable": ["undefined-global"],
-  "Lua.runtime.version": "Lua 5.1"
+  "Lua.runtime.version": "Lua 5.1",
+  "Lua.codeLens.enable": true
 }
