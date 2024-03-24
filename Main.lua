@@ -47,18 +47,7 @@ local function getDevelopPresets()
     local folders = {}
     -- Debug.pause()
     for _, folder in ipairs(LrApplication.developPresetFolders()) do
-        local a = folder:getName()
-        local b = folder:getDevelopPresets()
-        local c = { selected = false, presets = folder:getDevelopPresets() }
         folders[folder:getName()] = { selected = false, presets = folder:getDevelopPresets() }
-        -- local presets = {}
-        -- local folderName = folder:getName()
-        -- for _, preset in ipairs(folder:getDevelopPresets()) do
-        --     -- local folderData = {}
-        --     -- folderData["name"] = preset:getName()
-        --     -- folderData["uuid"] = preset:getUuid()
-        --     folders[folderName] = folderData
-        -- end
     end
     return folders
 end
@@ -172,8 +161,8 @@ local function showCustomDialogWithObserver(presets)
 
         -- Create the UI components like this so we can access the values as vars.
         Debug.pauseIfAsked()
-        local c = {}
         Debug.pause()
+        local c = {}
         for k, presetsByFolder in pairs(presetFolders) do
             props.folder = presetsByFolder.name
             props.selected = presetsByFolder.selected
@@ -202,43 +191,45 @@ local function showCustomDialogWithObserver(presets)
             props:addObserver("myObservedString", myCalledFunction)
 
             -- Create the contents for the dialog.
-            -- local c = f:row {}
+            table.insert(c, f:row {
+                f:static_text { title = k }
+            })
 
-            c = f:column {
-                spacing = f:dialog_spacing(),
-                f:row {
-                    fill_horizontal = 1,
-                    f:static_text {
-                        alignment = "right",
-                        width = LrView.share "label_width",
-                        title = "Bound value: "
-                    },
-                    staticTextValue,
-                }, -- end f:row
+            -- c = f:column {
+            --     spacing = f:dialog_spacing(),
+            --     f:row {
+            --         fill_horizontal = 1,
+            --         f:static_text {
+            --             alignment = "right",
+            --             width = LrView.share "label_width",
+            --             title = "Bound value: "
+            --         },
+            --         staticTextValue,
+            --     }, -- end f:row
 
-                f:row {
-                    f:static_text {
-                        alignment = "right",
-                        width = LrView.share "label_width",
-                        title = "New value: "
-                    },
-                    updateField,
-                    f:push_button {
-                        title = "Update",
+            --     f:row {
+            --         f:static_text {
+            --             alignment = "right",
+            --             width = LrView.share "label_width",
+            --             title = "New value: "
+            --         },
+            --         updateField,
+            --         f:push_button {
+            --             title = "Update",
 
-                        -- When the 'Update' button is clicked.
+            --             -- When the 'Update' button is clicked.
 
-                        action = function()
-                            outputToLog("Update button clicked.")
-                            staticTextValue.text_color = LrColor(0, 0, 0)
+            --             action = function()
+            --                 outputToLog("Update button clicked.")
+            --                 staticTextValue.text_color = LrColor(0, 0, 0)
 
-                            -- When this property is updated, the observer is notified.
+            --                 -- When this property is updated, the observer is notified.
 
-                            props.myObservedString = updateField.value
-                        end
-                    },
-                }, -- end row
-            }      -- end column
+            --                 props.myObservedString = updateField.value
+            --             end
+            --         },
+            --     }, -- end row
+            -- }      -- end column
         end
 
         LrDialogs.presentModalDialog {
@@ -251,3 +242,6 @@ end
 -- Now display the dialogs.
 Debug.pauseIfAsked()
 showCustomDialogWithObserver()
+
+-- Run main()
+-- LrTasks.startAsyncTask(main)

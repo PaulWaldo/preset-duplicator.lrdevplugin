@@ -11,7 +11,7 @@ return {
         },
         {
             title = "Tester",
-            file = "Tester.lua",
+            file = "ChatGPT2.lua",
         },
     },
     VERSION = { major = 1, minor = 0, revision = 0, build = 0, },
