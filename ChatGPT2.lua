@@ -71,9 +71,17 @@ local function showPresetSelectionDialog()
     local f = LrView.osFactory()
     local contents = f:column {}
     for _, folder in ipairs(presetsByFolder) do
-        local header = f:static_text { title = folder.name }
+        local header = f:row { f:static_text { title = folder.name } }
         table.insert(contents, header)
+        -- table.insert(contents, f:row { f:static_text { title = "jkhkhghghg" } })
+        -- local presetsForFolder = {}
+        for _, preset in ipairs(folder.presets) do
+            table.insert(contents, f:row { f:static_text { title = preset:getName() } })
+        end
+        -- table.insert(contents, presetsForFolder)
     end
+
+    Debug.pause()
 
     -- Group presets by folder
     -- for _, preset in ipairs(presetsByFolder) do
@@ -102,7 +110,6 @@ local function showPresetSelectionDialog()
     -- })
     -- contents = f:column(currentSection.title)
 
-    Debug.pause()
     local result = LrDialogs.presentModalDialog({
         title = "Select Develop Presets",
         contents = f:view(contents),
