@@ -13,56 +13,84 @@ local LrView = import 'LrView'
 -- local catalog = LrApplication.activeCatalog()
 
 -- Function to get all develop presets
-local function getAllDevelopPresets()
-    local presets = {}
-    local presetFolders = LrApplication.developPresetFolders()
-
-    for _, folder in ipairs(LrApplication.developPresetFolders()) do
-        for _, preset in ipairs(folder:getDevelopPresets()) do
-            table.insert(presets, { folder = folder, preset = preset })
-        end
-    end
+local function getAllDevelopPresetsByFolder()
     -- Debug.pause()
-    -- for _, folder in ipairs(presetFolders) do
-    --     local folderPresets = folder:getDevelopPresets()
-    --     for _, preset in ipairs(folderPresets) do
+    local folders = {}
+    local numPresets = 0
+    for i, folder in ipairs(LrApplication.developPresetFolders()) do
+        local presets = folder:getDevelopPresets()
+        numPresets = numPresets + #presets
+        folders[i] = { name = folder:getName(), folder = folder, presets = folder:getDevelopPresets() }
+    end
+    return numPresets, folders
+    -- for _, folder in ipairs(LrApplication.developPresetFolders()) do
+    --     local presets = {}
+    --     local folderName = folder:getName()
+    --     for _, preset in ipairs(folder:getDevelopPresets()) do
+    --         local folderData = {}
+    --         folderData["name"] = preset:getName()
+    --         folderData["uuid"] = preset:getUuid()
+    --         folders[folder] = folderData
+    --     end
+    -- end
+    -- return folders
+
+
+    -- local presets = {}
+    -- local presetFolders = LrApplication.developPresetFolders()
+
+    -- for _, folder in ipairs(LrApplication.developPresetFolders()) do
+    --     for _, preset in ipairs(folder:getDevelopPresets()) do
     --         table.insert(presets, { folder = folder, preset = preset })
     --     end
     -- end
+    -- -- Debug.pause()
+    -- -- for _, folder in ipairs(presetFolders) do
+    -- --     local folderPresets = folder:getDevelopPresets()
+    -- --     for _, preset in ipairs(folderPresets) do
+    -- --         table.insert(presets, { folder = folder, preset = preset })
+    -- --     end
+    -- -- end
 
-    return presets
+    -- return presets
 end
 
 -- Function to display UI and get user selection
 local function showPresetSelectionDialog()
-    local presets = getAllDevelopPresets()
-    -- Debug.pause()
+    local numPresets, presetsByFolder = getAllDevelopPresetsByFolder()
+    Debug.pause()
 
-    if #presets == 0 then
+    if numPresets == 0 then
+        -- if #presetsByFolder == 0 then
         LrDialogs.message("No develop presets found.", "There are no develop presets available.", "info")
         return nil
     end
 
     local dialogSections = {}
     local currentSection = nil
+    local f = LrView.osFactory()
+    local contents = f:column {}
+    for _, folder in ipairs(presetsByFolder) do
+        local header = f:static_text { title = folder.name }
+        table.insert(contents, header)
+    end
 
     -- Group presets by folder
-    for _, preset in ipairs(presets) do
-        if not currentSection or currentSection.title ~= preset.folder:getName() then
-            currentSection = { title = preset.folder:getName(), presets = {} }
-            table.insert(dialogSections, currentSection)
-        end
-        table.insert(currentSection.presets, preset)
-    end
+    -- for _, preset in ipairs(presetsByFolder) do
+    --     if not currentSection or currentSection.title ~= preset.folder:getName() then
+    --         currentSection = { title = preset.folder:getName(), presets = {} }
+    --         table.insert(dialogSections, currentSection)
+    --     end
+    --     table.insert(currentSection.presets, preset)
+    -- end
 
-    local f = LrView.osFactory()
-    local contents = {}
-    for _, section in ipairs(dialogSections) do
-        table.insert(contents, {
-            title = section.title,
-            view = f:column(section.presets)
-        })
-    end
+    -- local contents = {}
+    -- for _, section in ipairs(dialogSections) do
+    --     table.insert(contents, {
+    --         title = section.title,
+    --         view = f:column(section.presets)
+    --     })
+    -- end
     -- local headers = {}
     -- for i = 1, 10 do
     --     table.insert(headers,
@@ -72,13 +100,13 @@ local function showPresetSelectionDialog()
     -- table.insert(contents, f:row {
     --     headers,
     -- })
-    contents = f:column(headers)
+    -- contents = f:column(currentSection.title)
 
     Debug.pause()
     local result = LrDialogs.presentModalDialog({
         title = "Select Develop Presets",
-        -- contents = f:view(contents),
-        contents = contents,
+        contents = f:view(contents),
+        -- contents = contents,
         buttons = {
             { title = "OK",     action = "ok" },
             { title = "Cancel", action = "cancel" }
