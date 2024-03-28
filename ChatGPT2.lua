@@ -58,7 +58,7 @@ end
 -- Function to display UI and get user selection
 local function showPresetSelectionDialog()
     local numPresets, presetsByFolder = getAllDevelopPresetsByFolder()
-    Debug.pause()
+    -- Debug.pause()
 
     if numPresets == 0 then
         -- if #presetsByFolder == 0 then
@@ -80,7 +80,6 @@ local function showPresetSelectionDialog()
         end
         -- table.insert(contents, presetsForFolder)
     end
-
     Debug.pause()
 
     -- Group presets by folder
@@ -112,8 +111,8 @@ local function showPresetSelectionDialog()
 
     local result = LrDialogs.presentModalDialog({
         title = "Select Develop Presets",
-        contents = f:view(contents),
-        -- contents = contents,
+        -- contents = f:view(contents),
+        contents = f:scrolled_view(contents),
         buttons = {
             { title = "OK",     action = "ok" },
             { title = "Cancel", action = "cancel" }
