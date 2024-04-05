@@ -1,4 +1,7 @@
 {
   "Lua.runtime.version": "Lua 5.1",
-  "Lua.codeLens.enable": true
+  "Lua.codeLens.enable": true,
+  "Lua.runtime.special": {
+    "import": "require"
+  }
 }
