@@ -11,6 +11,7 @@ local LrApplication = import 'LrApplication'
 local LrView = import 'LrView'
 local LrFunctionContext = import 'LrFunctionContext'
 local LrBinding = import 'LrBinding'
+local LrDevelopController = import 'LrDevelopController'
 local bind = LrView.bind
 
 -- Get active catalog
@@ -101,9 +102,37 @@ local function showPresetSelectionDialog()
     end)
 end
 
+local function applyPresetsToSelectedPhoto()
+    local catalog = LrApplication.activeCatalog()
+    local targetPhoto = catalog:getTargetPhoto()
+
+    if not targetPhoto then
+        LrDialogs.showError("No photo selected.")
+        return
+    end
+
+    -- local selectedPresets = selectPresets()
+    local selectedPresets = nil
+    for i, folder in ipairs(LrApplication.developPresetFolders()) do
+        if folder:getName() == "Style: Black & White" then
+            selectedPresets = folder:getDevelopPresets()
+        end
+    end
+
+    Debug.pause()
+    if selectedPresets then
+        -- Apply each selected preset
+        for _, preset in ipairs(selectedPresets) do
+            local presetName = preset:getName()
+            local virtualCopy = catalog:createVirtualCopies("Test:" .. presetName)
+            LrDevelopController.applyDevelopPreset(presetName, virtualCopy)
+        end
+    end
+end
+
 -- Main function to run the plugin
 local function main()
-    local selectedPresets = showPresetSelectionDialog()
+    -- local selectedPresets = showPresetSelectionDialog()
     Debug.logn("Selected presets:", selectedPresets)
 
     if selectedPresets then
@@ -119,5 +148,6 @@ local function main()
     end
 end
 
+applyPresetsToSelectedPhoto()
 -- Run the plugin
 LrTasks.startAsyncTask(main)
