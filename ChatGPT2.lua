@@ -24,13 +24,16 @@ local function getAllDevelopPresetsByFolder(folders)
     for i, folder in ipairs(LrApplication.developPresetFolders()) do
         numPresets = numPresets + #folder:getDevelopPresets()
         local folderPresets = {}
+        Debug.lognpp("Preset Folder:", folder:getName())
         for _, preset in ipairs(folder:getDevelopPresets()) do
+            Debug.lognpp("Preset:", preset:getName())
             table.insert(folderPresets, { selected = false, preset = preset })
         end
         table.insert(folder, { presets = folderPresets })
         folders[i] = { name = folder:getName(), folder = folder, presets = folderPresets }
     end
     -- Debug.pause()
+    Debug.lognpp("All Presets", folders)
     return numPresets, folders
 end
 
@@ -40,9 +43,8 @@ end
 -- Function to display UI and get user selection
 local function showPresetSelectionDialog()
     LrFunctionContext.callWithContext("PresetSelection", function(context)
-        Debug.pause()
-        local presetsByFolder = LrBinding.makePropertyTable(context)
-        getAllDevelopPresetsByFolder(presetsByFolder)
+        local props = LrBinding.makePropertyTable(context)
+        getAllDevelopPresetsByFolder(props)
         -- if numPresets == 0 then
         --     LrDialogs.message("No develop presets found.", "There are no develop presets available.", "info")
         --     return nil
@@ -52,6 +54,8 @@ local function showPresetSelectionDialog()
         local currentSection = nil
         local f = LrView.osFactory()
         local contents = f:column {}
+        Debug.pause()
+        local presetsByFolder = props["< contents >"]
         for _, folder in ipairs(presetsByFolder) do
             local header = f:row { f:static_text { title = folder.name } }
             table.insert(contents, header)
