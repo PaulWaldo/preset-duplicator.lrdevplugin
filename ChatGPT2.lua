@@ -103,51 +103,57 @@ local function showPresetSelectionDialog()
 end
 
 local function applyPresetsToSelectedPhoto()
-    local catalog = LrApplication.activeCatalog()
-    local targetPhoto = catalog:getTargetPhoto()
+    LrTasks.startAsyncTask(function()
+        local catalog = LrApplication.activeCatalog()
+        local targetPhoto = catalog:getTargetPhoto()
 
-    if not targetPhoto then
-        LrDialogs.showError("No photo selected.")
-        return
-    end
-
-    -- local selectedPresets = selectPresets()
-    local selectedPresets = nil
-    for i, folder in ipairs(LrApplication.developPresetFolders()) do
-        if folder:getName() == "Style: Black & White" then
-            selectedPresets = folder:getDevelopPresets()
+        if not targetPhoto then
+            LrDialogs.showError("No photo selected.")
+            return
         end
-    end
 
-    Debug.pause()
-    if selectedPresets then
-        -- Apply each selected preset
-        for _, preset in ipairs(selectedPresets) do
-            local presetName = preset:getName()
-            local virtualCopy = catalog:createVirtualCopies("Test:" .. presetName)
-            LrDevelopController.applyDevelopPreset(presetName, virtualCopy)
+        -- local selectedPresets = selectPresets()
+        local selectedPresets = nil
+        for i, folder in ipairs(LrApplication.developPresetFolders()) do
+            if folder:getName() == "Style: Black & White" then
+                selectedPresets = folder:getDevelopPresets()
+            end
         end
-    end
+
+        if selectedPresets then
+            -- Apply each selected preset
+            for _, preset in ipairs(selectedPresets) do
+                local presetName = preset:getName()
+                local virtualCopies = catalog:createVirtualCopies("Test:" .. presetName)
+                -- Debug.pause()
+                catalog:withWriteAccessDo("My Action", function(context)
+                    for _, copy in ipairs(virtualCopies) do
+                        copy:applyDevelopPreset(preset)
+                    end
+                end)
+            end
+        end
+    end, "applyPresetsToSelectedPhoto")
 end
 
 -- Main function to run the plugin
 local function main()
     -- local selectedPresets = showPresetSelectionDialog()
-    Debug.logn("Selected presets:", selectedPresets)
+    -- Debug.logn("Selected presets:", selectedPresets)
 
-    if selectedPresets then
-        -- Save selected presets or apply them to photos
-        -- This part can be implemented according to the specific requirements
-        -- For demonstration purposes, we are just printing the selected presets
-        -- print("Selected presets:")
-        for _, preset in ipairs(selectedPresets) do
-            -- print(preset:getName())
-        end
-    else
-        -- print("No presets selected.")
-    end
+    -- if selectedPresets then
+    --     -- Save selected presets or apply them to photos
+    --     -- This part can be implemented according to the specific requirements
+    --     -- For demonstration purposes, we are just printing the selected presets
+    --     -- print("Selected presets:")
+    --     for _, preset in ipairs(selectedPresets) do
+    --         -- print(preset:getName())
+    --     end
+    -- else
+    --     -- print("No presets selected.")
+    -- end
+    applyPresetsToSelectedPhoto()
 end
 
-applyPresetsToSelectedPhoto()
 -- Run the plugin
 LrTasks.startAsyncTask(main)
