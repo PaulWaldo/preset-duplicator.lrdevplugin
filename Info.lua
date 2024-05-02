@@ -13,6 +13,10 @@ return {
             title = "Tester",
             file = "ChatGPT2.lua",
         },
+        {
+            title = "Workflow Collection",
+            file = "WorkflowCollection.lua",
+        },
     },
     VERSION = { major = 1, minor = 0, revision = 0, build = 0, },
 }
